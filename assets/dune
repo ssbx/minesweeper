@@ -1,0 +1,16 @@
+(install
+ (section
+  (site
+   (minesweeper images)))
+ (files
+  "1mines.png"
+  "2mines.png"
+  "3mines.png"
+  "4mines.png"
+  "5mines.png"
+  "6mines.png"
+  "7mines.png"
+  "8mines.png"
+  "exploded.png"
+  "flag.png"
+  "mine.png"))

@@ -1,0 +1,8 @@
+(executable
+ (public_name minesweeper)
+ (name minesweeper)
+ (libraries caml-libsdl2 caml-libsdl2-image dune-site))
+
+(generate_sites_module
+ (module assets)
+ (sites minesweeper))

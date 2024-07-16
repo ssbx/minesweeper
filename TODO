@@ -1,0 +1,32 @@
+Voir: https://games-stats.com/steam/?title=minesweeper !
+
+Interessant de voir que les seuls jeux payants qui n'aient pas fait de revenus
+sont des multi joueurs. C'est vrai que c'est bizare pour une jeux de mine!
+
+- menu choix grille (besoin de lib ou sys pour afficher charactères et/ou menus)
+- rendre la fin de jeux réussie belle (particules, feux d'artifice ...)
+
+# mines next gen
+
+- une grille à progression horizontale qui défile de droite vers la gauche a
+vitesse constante.
+- le premier shot génère la grille. Puiseque la progression démare aussi tot,
+il est preferable de démarer le premier shot à gauche de la grille.
+- La grille va difficulté grandissante, et est garantie de pouvoir être finie.
+- Si un emplacement est marqué sans mine, ou n'est pas marqué avec une mine, une
+alerte survient alors que la mine est proche de sortir de l'écran, donnant une
+chance au joueur de la corriger.
+- peut être l'avancement se ferait par acoup, pour pas devoir viser les cases
+avec la souris
+- arcade sons/effets/explosions
+
+
+customisation pour offrir
+=========================
+
+L'acheteur pourrait personnaliser
+- le début du j'eux (joyeux anniversaire... plus ou moins loufoque, chant
+exalté, que quand on croit que c'est finit, ça repars encore...
+- le contenu du jeux, avec deep fake visages/personnages du jeux
+- la fin du jeux deep faque
+
