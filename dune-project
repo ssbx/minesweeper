@@ -21,7 +21,9 @@
  (sites (share images))
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune
+          caml-sdl2
+          caml-sdl2-image)
  (tags
   (topics "to describe" your project)))
 

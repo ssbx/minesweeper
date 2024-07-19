@@ -1,3 +1,6 @@
+open CamlSDL2
+open CamlSDL2_image
+
 module GameLoop = struct
   type next_t = Continue | Exit
 
@@ -44,12 +47,18 @@ module GameLoop = struct
     Sdl.set_hint "SDL_RENDER_SCALE_QUALITY" "2";
     Sdl.set_hint "SDL_RENDER_VSYNC" "1";
     let window =
-      Sdl.create_window ~title:win_name ~pos:(`centered, `centered)
-        ~dims:(1240, 780)
+      Sdl.create_window
+        ~title:win_name
+        ~x:`centered
+        ~y:`centered
+        ~width:1240
+        ~height:780
         ~flags:[ Sdl.WindowFlags.Resizable; Sdl.WindowFlags.OpenGL ]
     in
     let renderer =
-      Sdl.create_renderer ~win:window ~index:(-1)
+      Sdl.create_renderer
+        ~win:window
+        ~index:(-1)
         ~flags:
           [
             Sdl.RendererFlags.Accelerated;
@@ -141,23 +150,26 @@ module Minesweeper = struct
     and y2 = (y * cell_width) + cell_padding
     and w = cell_width - (cell_padding * 2)
     and r, g, b, a = color in
-    let rect = Sdl.Rect.make4 ~x:x2 ~y:y2 ~w ~h:w in
-    Sdl.set_render_draw_color rdr ~rgb:(r, g, b) ~a;
+    let rect = Sdl.Rect.make ~x:x2 ~y:y2 ~w ~h:w in
+    Sdl.set_render_draw_color rdr ~r:r ~g:g ~b:b ~a:a;
     Sdl.render_fill_rect rdr rect;
     match image = img_id_none with
     | true -> ()
     | false ->
         let img_texture = List.nth (data ()).texture_images image in
-        Sdl.render_copy rdr ~texture:img_texture ~dst_rect:rect ()
+        Sdl.render_copy rdr
+          ~texture:img_texture
+          ~srcrect:None
+          ~dstrect:(Some rect)
 
   let gen_game_texture () =
     let d = data () in
     let text = d.texture_board and board = d.cells and rdr = d.renderer in
     let r, g, b, a = bg_col in
-    Sdl.set_renderer_target rdr (Some text);
-    Sdl.set_render_draw_color rdr ~rgb:(r, g, b) ~a;
+    Sdl.set_render_target rdr (Some text);
+    Sdl.set_render_draw_color rdr ~r ~g ~b ~a;
     Sdl.render_clear rdr;
-    Sdl.set_render_draw_color rdr ~rgb:(0, 0, 0) ~a:255;
+    Sdl.set_render_draw_color rdr ~r:0 ~g:0 ~b:0 ~a:255;
     let iter_fun x y v =
       match v with
       | Hint (n, _) -> draw_cell_at x y ~image:n rdr
@@ -167,7 +179,7 @@ module Minesweeper = struct
     Array.iteri
       (fun x line -> Array.iteri (fun y cell -> iter_fun x y cell) line)
       board;
-    Sdl.set_renderer_target rdr None
+    Sdl.set_render_target rdr None
 
   let rec gen_game_loop coords board num_mines =
     match num_mines = 0 with
@@ -206,8 +218,8 @@ module Minesweeper = struct
   let update_flags_texture () =
     let d = data () in
     let board = d.cells_flagged and rdr = d.renderer in
-    Sdl.set_renderer_target rdr (Some d.texture_flags);
-    Sdl.set_render_draw_color rdr ~rgb:(0, 0, 0) ~a:0;
+    Sdl.set_render_target rdr (Some d.texture_flags);
+    Sdl.set_render_draw_color rdr ~r:0 ~g:0 ~b:0 ~a:0;
     Sdl.render_clear rdr;
     let iter_fun x y v =
       match v with
@@ -217,13 +229,13 @@ module Minesweeper = struct
     Array.iteri
       (fun x line -> Array.iteri (fun y cell -> iter_fun x y cell) line)
       board;
-    Sdl.set_renderer_target rdr None
+    Sdl.set_render_target rdr None
 
   let update_shade_texture () =
     let d = data () in
     let board = d.cells and rdr = d.renderer in
-    Sdl.set_renderer_target rdr (Some d.texture_shade);
-    Sdl.set_render_draw_color rdr ~rgb:(0, 0, 0) ~a:0;
+    Sdl.set_render_target rdr (Some d.texture_shade);
+    Sdl.set_render_draw_color rdr ~r:0 ~g:0 ~b:0 ~a:0;
     Sdl.render_clear rdr;
     let iter_fun x y v =
       match v with
@@ -236,7 +248,7 @@ module Minesweeper = struct
     Array.iteri
       (fun x line -> Array.iteri (fun y cell -> iter_fun x y cell) line)
       board;
-    Sdl.set_renderer_target rdr None
+    Sdl.set_render_target rdr None
 
   let cell_from_cursor (e : Sdl.MouseButtonEvent.t) =
     let d = data () in
@@ -279,9 +291,9 @@ module Minesweeper = struct
     let rdr = d.renderer in
     assert (d._anim_disco_running = true);
     let x, y = Array.get d._anim_disco_buffer d._anim_disco_buffer_id in
-    Sdl.set_renderer_target rdr (Some d.texture_shade);
+    Sdl.set_render_target rdr (Some d.texture_shade);
     draw_cell_at x y ~color:(0, 0, 255, 255) d.renderer;
-    Sdl.set_renderer_target rdr None;
+    Sdl.set_render_target rdr None;
     d._anim_disco_buffer_id <- d._anim_disco_buffer_id + 1;
     match d._anim_disco_buffer_id > d._anim_disco_buffer_end with
     | true -> _reset_anim_disco ()
@@ -321,12 +333,12 @@ module Minesweeper = struct
     let d = data () in
     let rdr = d.renderer in
     boom := true;
-    Sdl.set_renderer_target rdr (Some d.texture_board);
+    Sdl.set_render_target rdr (Some d.texture_board);
     List.iter
       (fun (x, y) ->
         draw_cell_at x y ~color:(255, 0, 0, 255) ~image:img_id_exploded rdr)
       bombs;
-    Sdl.set_renderer_target rdr None
+    Sdl.set_render_target rdr None
 
   let check_winning_cond () =
     let d = data () in
@@ -475,18 +487,21 @@ module Minesweeper = struct
   let create_texture rdr (r, g, b, a) =
     let w = ncells_x * cell_width and h = ncells_y * cell_width in
     let texture =
-      Sdl.render_create_texture rdr Sdl.PixelFormat.RGBA8888
-        Sdl.TextureAccess.Target w h
+      Sdl.create_texture rdr
+        ~fmt:Sdl.PixelFormat.RGBA8888
+        ~access:Sdl.TextureAccess.Target
+        ~width:w
+        ~height:h
     in
     Sdl.set_texture_blend_mode texture Sdl.BlendMode.SDL_BLENDMODE_BLEND;
-    Sdl.set_renderer_target rdr (Some texture);
-    Sdl.set_render_draw_color rdr ~rgb:(r, g, b) ~a;
+    Sdl.set_render_target rdr (Some texture);
+    Sdl.set_render_draw_color rdr ~r ~g ~b ~a;
     Sdl.render_clear rdr;
-    Sdl.set_renderer_target rdr None;
+    Sdl.set_render_target rdr None;
     texture
 
   let on_ready _w r =
-    Sdl_image.init [ `PNG ];
+    Img.init [ `PNG ];
     let img_dir = List.nth Assets.Sites.images 0 in
     let fp fname = Filename.concat img_dir fname in
     let d =
@@ -503,17 +518,17 @@ module Minesweeper = struct
         texture_flags = create_texture r (0, 0, 0, 0);
         texture_images =
           [
-            Sdl_image.load_texture r ~filename:(fp "mine.png");
-            Sdl_image.load_texture r ~filename:(fp "1mines.png");
-            Sdl_image.load_texture r ~filename:(fp "2mines.png");
-            Sdl_image.load_texture r ~filename:(fp "3mines.png");
-            Sdl_image.load_texture r ~filename:(fp "4mines.png");
-            Sdl_image.load_texture r ~filename:(fp "5mines.png");
-            Sdl_image.load_texture r ~filename:(fp "6mines.png");
-            Sdl_image.load_texture r ~filename:(fp "7mines.png");
-            Sdl_image.load_texture r ~filename:(fp "8mines.png");
-            Sdl_image.load_texture r ~filename:(fp "flag.png");
-            Sdl_image.load_texture r ~filename:(fp "exploded.png");
+            Img.load_texture r ~filename:(fp "mine.png");
+            Img.load_texture r ~filename:(fp "1mines.png");
+            Img.load_texture r ~filename:(fp "2mines.png");
+            Img.load_texture r ~filename:(fp "3mines.png");
+            Img.load_texture r ~filename:(fp "4mines.png");
+            Img.load_texture r ~filename:(fp "5mines.png");
+            Img.load_texture r ~filename:(fp "6mines.png");
+            Img.load_texture r ~filename:(fp "7mines.png");
+            Img.load_texture r ~filename:(fp "8mines.png");
+            Img.load_texture r ~filename:(fp "flag.png");
+            Img.load_texture r ~filename:(fp "exploded.png");
           ];
         scr_width = 100;
         scr_height = 100;
@@ -548,13 +563,17 @@ module Minesweeper = struct
     and rx = d.scr_x
     and ry = d.scr_y in
     let br, bg, bb, ba = if !has_won then bg_col_won else bg_col in
-    Sdl.set_render_draw_color rend ~rgb:(br, bg, bb) ~a:ba;
+    Sdl.set_render_draw_color rend ~r:br ~g:bg ~b:bb ~a:ba;
     Sdl.render_clear rend;
-    let rect = Sdl.Rect.make4 ~x:rx ~y:ry ~w ~h in
-    Sdl.render_copy rend ~texture:d.texture_board ~dst_rect:rect ();
+    let rect = Sdl.Rect.make ~x:rx ~y:ry ~w ~h in
+    Sdl.render_copy rend
+      ~texture:d.texture_board
+      ~srcrect:None
+      ~dstrect:(Some rect) ;
     if !boom = false then
-      Sdl.render_copy rend ~texture:d.texture_shade ~dst_rect:rect ();
-    Sdl.render_copy rend ~texture:d.texture_flags ~dst_rect:rect ()
+      Sdl.render_copy rend
+        ~texture:d.texture_shade ~srcrect:None ~dstrect:(Some rect);
+    Sdl.render_copy rend ~texture:d.texture_flags ~srcrect:None ~dstrect:(Some rect)
 
   let on_close () =
     let d = data () in
