@@ -1,0 +1,7 @@
+(library
+ (name minesweeper)
+ (libraries caml-sdl2 caml-sdl2-image dune-site))
+
+(generate_sites_module
+ (module assets)
+ (sites minesweeper))
