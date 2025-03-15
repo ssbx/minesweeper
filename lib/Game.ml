@@ -1,7 +1,7 @@
 open CamlSDL2
 open CamlSDL2_image
 
-module GameLoop = struct
+module Loop = struct
   type next_t = Continue | Exit
 
   type state_t = {
@@ -43,7 +43,7 @@ module GameLoop = struct
         loop _w r
 
   let start ~on_ready ~on_event ~on_update ~on_draw ~on_close ~win_name =
-    Sdl.init [ `SDL_INIT_VIDEO; `SDL_INIT_EVENTS; `SDL_INIT_TIMER ];
+    Sdl.init [ `VIDEO; `EVENTS; `TIMER ];
     Sdl.set_hint "SDL_RENDER_SCALE_QUALITY" "2";
     Sdl.set_hint "SDL_RENDER_VSYNC" "1";
     let window =
@@ -66,6 +66,7 @@ module GameLoop = struct
             Sdl.RendererFlags.PresentVSync;
           ]
     in
+    Textures.load renderer;
     state.on_ready_fun <- on_ready;
     state.on_event_fun <- on_event;
     state.on_update_fun <- on_update;
@@ -79,7 +80,7 @@ module GameLoop = struct
     Sdl.destroy_window window
 end
 
-module Minesweeper = struct
+module Callbacks = struct
   let ncells_x = 30
   let ncells_y = 30
   let nmines = ncells_y * ncells_x / 5
@@ -464,8 +465,8 @@ module Minesweeper = struct
       d.scr_y <- (h - d.scr_height) / 2)
 
   let handle_window_event = function
-    | Sdl.WindowEventID.SDL_WINDOWEVENT_RESIZED e
-    | Sdl.WindowEventID.SDL_WINDOWEVENT_SIZE_CHANGED e ->
+    | Sdl.WindowEventID.RESIZED e
+    | Sdl.WindowEventID.SIZE_CHANGED e ->
         update_size e.x e.y
     | _ ->
         let d = data () in
@@ -493,7 +494,7 @@ module Minesweeper = struct
         ~width:w
         ~height:h
     in
-    Sdl.set_texture_blend_mode texture Sdl.BlendMode.SDL_BLENDMODE_BLEND;
+    Sdl.set_texture_blend_mode texture Sdl.BlendMode.BLEND;
     Sdl.set_render_target rdr (Some texture);
     Sdl.set_render_draw_color rdr ~r ~g ~b ~a;
     Sdl.render_clear rdr;
@@ -553,7 +554,7 @@ module Minesweeper = struct
        (match d._anim_disco_running with
        | true -> _anim_disco ()
        | false -> ());*)
-    if !quit then GameLoop.Exit else GameLoop.Continue
+    if !quit then Loop.Exit else Loop.Continue
 
   let on_draw () =
     let d = data () in
@@ -583,10 +584,7 @@ module Minesweeper = struct
     List.iter (fun tex -> Sdl.destroy_texture tex) d.texture_images
 end
 
-let () =
-  Sys.chdir (Filename.dirname Sys.executable_name);
-  GameLoop.start ~win_name:"Démineur" ~on_ready:Minesweeper.on_ready
-    ~on_event:Minesweeper.on_event ~on_update:Minesweeper.on_update
-    ~on_draw:Minesweeper.on_draw ~on_close:Minesweeper.on_close;
-  Gc.print_stat stdout;
-  exit 0
+let start () =
+  Loop.start ~win_name:"Démineur" ~on_ready:Callbacks.on_ready
+    ~on_event:Callbacks.on_event ~on_update:Callbacks.on_update
+    ~on_draw:Callbacks.on_draw ~on_close:Callbacks.on_close

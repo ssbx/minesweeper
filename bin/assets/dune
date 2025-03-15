@@ -13,4 +13,12 @@
   "8mines.png"
   "exploded.png"
   "flag.png"
-  "mine.png"))
+  "mine.png"
+  "grid.txt"))
+
+(install
+ (section
+  (site
+   (minesweeper grids)))
+ (files
+  "grid.txt"))

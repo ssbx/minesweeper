@@ -30,3 +30,36 @@ exalté, que quand on croit que c'est finit, ça repars encore...
 - le contenu du jeux, avec deep fake visages/personnages du jeux
 - la fin du jeux deep faque
 
+TODO jeux solitaire cartes avec progresion comme dans le jeux "im not a
+designer" minesweeper ou un cube débloque d'autres.
+
+
+pof1
+====
+
+- Défilement du niveau de droite à gauche.
+- Un vaisseau suit la progression sur la gauche de l'écran
+- Quand il trouve un flag il démine et incrémente un conteur
+- Quand il trouve une case non découverte et si le compteur est vide:
+  - case sans mine: rien
+  - case avec mine: dégats au vaisseau
+- Quand il trouve une case non découverte et si le compteur est plein
+il déclanche une explosion qui "nettoie" l'écran et reset le compteur
+(tester le mode auto, des qu'une case non découverte est rencontrée,
+et manuel)
+
+Tout début du jeux, on voi une sphere (planette), parcourue du chemin
+que devra emprunter le joueur. Zoom vers le jeux. Lorsqu'il perd, zoom
+inverse, et il vois sa progression.
+
+Pièges parfois, explosion inévitable (compteur) à un moment, suivi d'un
+vide, puis gros pacas de bombes qui met en difficulté (puisque compteur
+vide)
+
+Ecran d'accueil du jeux, un panorama de foret abimée par la guerre, et 
+des explosions intermitantes. Il faut déminer cette planète.
+
+fin perdue, panorama de planète dévastée.
+fin gagnée, panorama de forêe primaire pleine d'animaux
+
+
