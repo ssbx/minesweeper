@@ -39,14 +39,41 @@ pof1
 
 - Défilement du niveau de droite à gauche.
 - Un vaisseau suit la progression sur la gauche de l'écran
-- Quand il trouve un flag il démine et incrémente un conteur
-- Quand il trouve une case non découverte et si le compteur est vide:
-  - case sans mine: rien
-  - case avec mine: dégats au vaisseau
-- Quand il trouve une case non découverte et si le compteur est plein
-il déclanche une explosion qui "nettoie" l'écran et reset le compteur
-(tester le mode auto, des qu'une case non découverte est rencontrée,
-et manuel)
+- Déminer, soit:
+  - quand il trouve un flag (sous lui) il démine et incrémente un conteur
+  - un vaisseau mobile va déminer les flag posé par le joueur
+- Quand arrive sous lui (contre écran gauche) une case non découverte:
+  - compteur est vide:
+    - case sans mine: rien
+    - case avec mine: explosion dégats au vaisseau
+  - compteur plein SOIT:
+    - il déclanche une explosion qui "nettoie" l'écran et reset le compteur
+    - rien, c'est le joueur qui décide de manuellement lancer la bombe
+
+Modules de déminage:
+- plusieurs types de bombes
+- un premier module va déterminer le type de bombe et colorer le flag (si
+le flag est mal placé, couleur random)
+- des lors le module approprié va ce charger du déminage
+  - pour en extraire l'energie (participe au combo)
+  - pour le faire imploser
+- le joueur peut influencer l'ordre de déminage et le souhait de récolter ou
+pas l'energie
+- possibilitée de combos de trois couleurs identiques déminées d'affilé pour
+gagner soit: energie bombe, score et amélioration auto du vaisseau (radiant
+silvergun), points pour améliration vaiseau entre niveaux
+
+------
+(pas sur, mais trouver un truc pour créer des possibilité de combos qui
+plafonnent)
+-- 1 --
+Armes joueur pour système de combo, on peut utiser la jauge energie pour 
+utiliser des armes spécifiques:
+- découverte auto sans explosion du niveau +:
+  - extracteur d'energie en promenant une sphère sur les cases 
+-- 2 --
+vider le tableau de 3 des 4 couleurs puis déclancher la bombe
+
 
 Tout début du jeux, on voi une sphere (planette), parcourue du chemin
 que devra emprunter le joueur. Zoom vers le jeux. Lorsqu'il perd, zoom
@@ -56,10 +83,22 @@ Pièges parfois, explosion inévitable (compteur) à un moment, suivi d'un
 vide, puis gros pacas de bombes qui met en difficulté (puisque compteur
 vide)
 
+Peut être boss déffilement du tableau dessous, besoin de récupérer de 
+l'énergie en déminant pour ensuite lancer la bombe manuelle sur le boss
+
 Ecran d'accueil du jeux, un panorama de foret abimée par la guerre, et 
 des explosions intermitantes. Il faut déminer cette planète.
 
 fin perdue, panorama de planète dévastée.
 fin gagnée, panorama de forêe primaire pleine d'animaux
 
+Amélioration vaisseau:
+- achat de module spécifiques pour nouvelles mines
+- nombre de modules de déminage mobile
+- portée de la bombe
+- reserve d'energie pour bombe
+- reserve de points de vie du vaisseau mère 
+
+Communication équipage lors de diverses situations, comme dans Radiant
+Silvergun des fenètres avec les personnages manga en visio.
 
