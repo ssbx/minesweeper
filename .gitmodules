@@ -1,0 +1,6 @@
+[submodule "vendor/caml-sdl2"]
+	path = vendor/caml-sdl2
+	url = git@github.com:ssbx/caml-sdl2.git
+[submodule "vendor/caml-sdl2-image"]
+	path = vendor/caml-sdl2-image
+	url = git@github.com:ssbx/caml-sdl2-image.git
