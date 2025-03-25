@@ -18,7 +18,6 @@ let clear rdr tex =
     ~b:clear_white.b
     ~a:clear_white.a
 
-
 let create ~w ~h rdr =
   let tex = Sdl.create_texture rdr
     ~fmt:Sdl.PixelFormat.RGBA8888

@@ -1,5 +1,5 @@
 open CamlSDL2
-open Engine.BackEnd
+open Utils
 
 type t = Mine | Neigh1 | Neigh2 | Neigh3 | Neigh4 | Neigh5
               | Neigh6 | Neigh7 | Neigh8 | Flag | Exploded

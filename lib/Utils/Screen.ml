@@ -1,7 +1,6 @@
 open CamlSDL2
 
-type t = { w : Sdl.Window.t
-         ; r : Sdl.Renderer.t }
+type t = Sdl.Window.t * Sdl.Renderer.t
 
 let init ~w ~h =
   Sdl.init [ `VIDEO; `EVENTS; `TIMER ];
@@ -24,18 +23,18 @@ let init ~w ~h =
   Sdl.set_render_draw_color r ~r:0 ~g:0 ~b:0 ~a:255;
   Sdl.render_clear r;
   Sdl.render_present r;
-  { w = w; r = r; }
+  w, r
 
-let present scr =
-  Sdl.set_render_target scr.r None;
-  Sdl.render_present scr.r
+let present (_w, r) =
+  Sdl.set_render_target r None;
+  Sdl.render_present r
 
-let clear scr =
-  Sdl.set_render_target scr.r None;
-  Sdl.set_render_draw_color scr.r ~r:100 ~g:0 ~b:0 ~a:255;
-  Sdl.render_clear scr.r
+let clear (_w, r) =
+  Sdl.set_render_target r None;
+  Sdl.set_render_draw_color r ~r:100 ~g:0 ~b:0 ~a:255;
+  Sdl.render_clear r
 
-let destroy scr =
-  Sdl.destroy_renderer scr.r;
-  Sdl.destroy_window scr.w
+let destroy (w, r) =
+  Sdl.destroy_renderer r;
+  Sdl.destroy_window w
 
