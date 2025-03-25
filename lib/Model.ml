@@ -10,7 +10,7 @@ module Vector = struct
 
 end
 
-module Cell = struct 
+module Cell = struct
 
   type t = {
     mutable flagged    : bool;
@@ -43,7 +43,7 @@ module Cell = struct
       cell.c_west             := Some grid.(x - 1).(y);
       grid.(x - 1).(y).c_east := Some cell;
     )
- 
+
   let of_char = function
     | ' ' -> None
     |  _  -> Some empty
@@ -63,8 +63,8 @@ module Grid = struct
   }
 
   let print grid =
-    for y = 0 to grid.dimentions.y - 1 do 
-      for x = 0 to grid.dimentions.x - 1 do 
+    for y = 0 to grid.dimentions.y - 1 do
+      for x = 0 to grid.dimentions.x - 1 do
         let c = grid.cells.(x).(y) in
         Printf.printf "%c" (Cell.to_char c)
       done;
@@ -74,7 +74,7 @@ module Grid = struct
   (**
    *
    *)
-  let create ~w ~h = 
+  let create ~w ~h =
     ({ dimentions = Vector.create ~x:w ~y:h
      ; cells      = Array.make_matrix w h None } : t)
 
@@ -85,8 +85,8 @@ module Grid = struct
 
     (* load lines from file *)
     let c = Stdlib.open_in fname in
-    let lines = 
-       Stdlib.in_channel_length c 
+    let lines =
+       Stdlib.in_channel_length c
     |> Stdlib.really_input_string c
     |> String.trim
     |> String.split_on_char '\n'
@@ -95,7 +95,7 @@ module Grid = struct
 
     (* create matrix *)
     let w = List.length lines in
-    let h = String.length (List.nth lines 0) in 
+    let h = String.length (List.nth lines 0) in
     let m = create ~w ~h in
 
     (* fill it with lines *)
@@ -104,7 +104,7 @@ module Grid = struct
         m.cells.(x).(y) <- Cell.of_char ch;
       ) row
     ) lines;
-    
+
     m
-  
+
 end
