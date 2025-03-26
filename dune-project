@@ -22,6 +22,7 @@
  (synopsis "A short synopsis")
  (description "A longer description")
  (depends ocaml dune dune-site
+          core
           caml-sdl2
           caml-sdl2-image)
  (tags

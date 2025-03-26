@@ -14,6 +14,13 @@
   "exploded.png"
   "flag.png"
   "mine.png"
+  "ship9.png"
+  "ship14.png"
+  "ship1_x2.png"
+  "ship2_x2.png"
+  "ship3_x2.png"
+  "ship9_x2.png"
+  "ship9_x4.png"
   "grid.txt"))
 
 (install
@@ -22,3 +29,5 @@
    (minesweeper grids)))
  (files
   "grid.txt"))
+
+

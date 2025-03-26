@@ -4,7 +4,7 @@ type t = Sdl.Window.t * Sdl.Renderer.t
 
 let init ~w ~h =
   Sdl.init [ `VIDEO; `EVENTS; `TIMER ];
-  Sdl.set_hint "SDL_RENDER_SCALE_QUALITY" "2";
+  Sdl.set_hint "SDL_RENDER_SCALE_QUALITY" "0";
   Sdl.set_hint "SDL_RENDER_VSYNC" "1";
   let w = Sdl.create_window
     ~title:"Minesweeper"

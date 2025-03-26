@@ -2,7 +2,7 @@
 
 (library
  (name minesweeper)
- (libraries caml-sdl2 caml-sdl2-image dune-site unix))
+ (libraries caml-sdl2 caml-sdl2-image dune-site unix core))
 
 (generate_sites_module
  (module AssetFiles)
