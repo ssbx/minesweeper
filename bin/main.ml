@@ -15,7 +15,7 @@ let () =
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
 
-  Mines.Game.main ();
+  ColorWall.Game.main ();
 
 (*
 

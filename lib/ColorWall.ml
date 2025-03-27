@@ -49,10 +49,10 @@ module ColorRect = struct
   type t =
     { mutable src_rect : Sdl.Rect.t
     ; mutable dst_rect : Sdl.Rect.t
-    ; r : int
-    ; g : int
-    ; b : int
-    ; a : int }
+    ; mutable r : int
+    ; mutable g : int
+    ; mutable b : int
+    ; mutable a : int }
 
   let make ~w ~h ~r ~g ~b ~a =
     { src_rect = Sdl.Rect.make ~x:0 ~y:0 ~w ~h
@@ -336,6 +336,56 @@ module MouseInSystem = struct
 
 end
 
+module MouseOverSystem = struct
+
+  let pixel_radius = 360
+  let pixel_radius_f = Int.to_float pixel_radius
+  let col_move = 10
+  type direction_t = Up | Down
+
+  let set_intensity intensity bt = (Int.to_float bt) *. intensity |> Int.of_float
+
+  let gencol i = function
+  | b, Up when b > (255 - col_move) ->
+    b - ((Random.int col_move) |> set_intensity i)
+  | b, Up ->
+    b + ((Random.int col_move) |> set_intensity i)
+  | b, Down when b < col_move ->
+    b + ((Random.int col_move) |> set_intensity i)
+  | b, Down ->
+    b - ((Random.int col_move) |> set_intensity i)
+
+  let rand_cols i r g b =
+    let changebyte = Random.int 3 in
+    let direction = if Random.bool () then Up else Down in
+    match changebyte with
+    | 0 -> (gencol i (r, direction), g, b)
+    | 1 -> (r, gencol i (g, direction), b)
+    | 2 -> (r, g, gencol i (b, direction))
+    | _ -> failwith "nononon"
+
+
+  let rec update ms = function
+  | ({ transform_cmp = Some t
+     ; mousein_cmp = None
+     ; color_rect = Some r; _} : Entity.t) :: tail ->
+    let dist_x = Int.to_float (!MouseInSystem.pos_x - t.x |> abs)
+    and dist_y = Int.to_float (!MouseInSystem.pos_y - t.y |> abs) in
+    let dist_f = sqrt (dist_x *. dist_x +. dist_y *. dist_y) in
+    let dist = Int.of_float dist_f in
+    if dist <= pixel_radius then (
+      let intensity = (Float.cos (dist_f /. pixel_radius_f)) in
+      let (r', g', b') = rand_cols intensity r.r r.g r.b in
+      r.r <- r';
+      r.g <- g';
+      r.b <- b';
+      r.a <- 255
+    );
+    update ms tail
+  | _ :: tail -> update ms tail
+  | [] -> ()
+
+end
 (*****************************************************************************
  **** GAME *******************************************************************
  *****************************************************************************)
@@ -355,9 +405,11 @@ module Events = struct
 end
 
 module Board = struct
+
   let grid_size = 30
   let border = 20
-
+  let orig_x : int ref = ref 0
+  let orig_y : int ref = ref 0
 
   let randcol () = Random.int 100
 
@@ -375,21 +427,27 @@ module Board = struct
     Entity.add_color_rect id crect;
     gen_cells ~left:(left + h) ~top ~h ~border (n - 1)
 
-  let rec gen_rows ~left ~top ~h ~border ~w = function
+  let rec gen_rows ~left ~top ~h ~border ~w ~ncols = function
   | 0 -> ()
   | n ->
-    gen_cells ~left ~top ~h ~border 30;
-    gen_rows ~left ~top:(top + h) ~h ~border ~w (n - 1)
+    gen_cells ~left ~top ~h ~border ncols;
+    gen_rows ~left ~top:(top + h) ~h ~border ~w ~ncols (n - 1)
 
   let init w h =
-    let border = 2 in
-    let board_w = (min w h) - (2 * border)
-    and center_x = w / 2
-    and center_y = h / 2 in
+    let border  = 2 in
+    let board_w = w - (2 * border) in
+    let board_h = h - (2 * border) in
+    let center_x = w / 2 in
+    let center_y = h / 2 in
 
-    let board_w = board_w - ( ( mod ) board_w grid_size ) in
+    let board_h' = board_h - ( ( mod ) board_h grid_size ) in
+    let cell_w   = board_h / grid_size in
+    let ncols = board_w / cell_w in
+    let board_w' = board_w - ( ( mod ) board_w ncols ) in
+
+(*
     let cmp_colrect =  ColorRect.make
-      ~w:(board_w + border) ~h:(board_w + border)
+      ~w:(board_w' + border) ~h:(board_h' + border)
       ~r:0 ~g:0 ~b:155 ~a:0 in
     let cmp_trans   = Transform.make
       ~scale:1.
@@ -398,15 +456,14 @@ module Board = struct
     let board = Entity.create () in
     Entity.add_transform board cmp_trans;
     Entity.add_color_rect board cmp_colrect;
+*)
 
-    let top_start = center_y - (board_w / 2) in
-    let left_start = center_x - (board_w / 2) in
-    let cell_w= board_w / grid_size in
+    orig_x := center_x - (board_w' / 2);
+    orig_y := center_y - (board_h' / 2);
     gen_rows
-      ~left:(left_start + cell_w / 2)
-      ~top:(top_start + cell_w / 2)
-      ~h:cell_w ~border ~w:(board_w - border)grid_size
-
+      ~left:(!orig_x + cell_w / 2)
+      ~top:(!orig_y + cell_w / 2)
+      ~h:cell_w ~border ~w:(board_w - border) ~ncols grid_size
 
 end
 
@@ -431,6 +488,7 @@ module Game = struct
     TransformSystem.update entities;
     MovementSystem.update ms entities;
     MouseInSystem.update ms entities;
+    MouseOverSystem.update ms entities;
     ColorRectSystem.update entities;
     SpriteSystem.update entities
 
