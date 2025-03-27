@@ -1,13 +1,8 @@
 open Minesweeper
 open Core
 
-let x : int ref = ref 0
-
-let rec _loop = function
-  | 0 -> ()
-  | n ->
-    x := !x + 1;
-    _loop (n - 1)
+(* XXX: voir ~/src/box2d/build/bin/testbed,
+  joints->cantilever et joints->chain *)
 
 let () =
   (*let g = Grid.create ~w:30 ~h:30 in*)
@@ -20,7 +15,7 @@ let () =
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
 
-  ECS.Game.main ();
+  Mines.Game.main ();
 
 (*
 
