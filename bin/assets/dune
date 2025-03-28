@@ -21,6 +21,7 @@
   "ship3_x2.png"
   "ship9_x2.png"
   "ship9_x4.png"
+  "circle.png"
   "grid.txt"))
 
 (install

@@ -478,7 +478,7 @@ module Game = struct
     SpriteSystem.update entities
 
   let render entities rdr =
-    Sdl.set_render_draw_color rdr ~r:0 ~g:100 ~b:150 ~a:255;
+    Sdl.set_render_draw_color rdr ~r:100 ~g:100 ~b:100 ~a:255;
     Sdl.render_clear rdr;
     ColorRectSystem.render rdr entities;
     SpriteSystem.render rdr entities;
@@ -507,7 +507,7 @@ module Game = struct
     Events.add MouseInSystem.handle_event;
 
     let _mh = scr_h / 2 in
-    let cmp_spritey = Sprite.make ~imgname:"ship2_x2.png" rdr in
+    let cmp_spritey = Sprite.make ~imgname:"circle.png" rdr in
     let cmp_transy = Transform.make ~scale:1. ~x:middle_w ~y:150 () in
     let cmp_physic = Physics.make ~x:middle_w ~y:150 in
 
