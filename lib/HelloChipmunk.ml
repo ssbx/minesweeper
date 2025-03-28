@@ -1,6 +1,8 @@
 open CamlSDL2
 open Core
 
+module Ck = Chipmunk
+
 (*****************************************************************************
  **** COMPONENTS *************************************************************
  *****************************************************************************)
@@ -9,6 +11,15 @@ module KeyIn = struct
   type t = bool
 
   let make () = (true : t)
+
+end
+
+module Physics = struct
+
+  type t = int * int
+  (* include Ck.Chipmunk.Body.t to update trans *)
+
+  let make ~x ~y = ((x, y) : t)
 
 end
 
@@ -96,7 +107,8 @@ module Entity = struct
     ; mutable transform_cmp : Transform.t option
     ; mutable keyin_cmp     : KeyIn.t     option
     ; mutable color_rect    : ColorRect.t option
-    ; mutable mousein_cmp   : MouseIn.t option }
+    ; mutable mousein_cmp   : MouseIn.t   option
+    ; mutable physics_cmp   : Physics.t   option }
 
   let data : t list ref = ref []
   let get id = List.find_exn ~f:(fun ent -> ent.id = id) !data
@@ -110,6 +122,7 @@ module Entity = struct
       ; transform_cmp = None
       ; keyin_cmp     = None
       ; mousein_cmp   = None
+      ; physics_cmp   = None
       ; color_rect    = None } :: !data;
     id
 
@@ -133,7 +146,9 @@ module Entity = struct
     let e = get id in
     e.mousein_cmp <- Some mousein
 
-
+  let add_physics id (phy : Physics.t) =
+    let e = get id in
+    e.physics_cmp <- Some phy
 
 end
 
@@ -329,6 +344,96 @@ module MouseInSystem = struct
 
 end
 
+
+let init_phy ()  =
+
+  let space = Ck.cpSpaceNew () in
+  print_endline "cpSpaceNew success";
+
+  let gravity = Ck.Vect.make ~x:0. ~y:(-100.) in
+
+  Ck.cpSpaceSetGravity space gravity;
+  print_endline "cpSpaceSetGravity success";
+
+  let body = Ck.cpSpaceGetStaticBody space in
+  print_endline "cpSpaceGetStaticBody success";
+
+  let va = Ck.Vect.make ~x:(-20.) ~y:(5.)
+  and vb = Ck.Vect.make ~x:(20.) ~y:(-5.) in
+  let ground = Ck.cpSegmentShapeNew body va vb 0. in
+  print_endline "cpSegmentShapeNew success";
+
+  Ck.cpShapeSetFriction ground 1.;
+  print_endline "cpShapeSetFriction success";
+
+  Ck.cpSpaceAddShape space ground;
+  print_endline "cpSpaceAddShape success";
+
+  let radius = 5.
+  and mass = 1. in
+  let moment = Ck.cpMomentForCircle mass 0. radius Ck.Vect.zero in
+  print_endline "cpMomentForCircle success";
+  Printf.printf "moment is %f\n" moment;
+
+  let ball_body = Ck.cpBodyNew mass moment in
+  print_endline "cpBodyNew success";
+
+  Ck.cpSpaceAddBody space ball_body;
+  print_endline "cpSpaceAddBody success";
+
+  let position = Ck.Vect.make ~x:0. ~y:15. in
+  Ck.cpBodySetPosition ball_body position;
+  print_endline "cpBodySetPosition success";
+
+  let ball_shape = Ck.cpCircleShapeNew ball_body radius Ck.Vect.zero  in
+  print_endline "cpCircleShapeNew success";
+
+  Ck.cpSpaceAddShape space ball_shape;
+  print_endline "cpSpaceAddShape success";
+
+  Ck.cpShapeSetFriction ball_shape 0.7;
+  print_endline "cpShapeSetFriction success";
+
+  let timestep = 1. /. 144. in
+  (timestep, ball_shape, ball_body, ground, space)
+
+let ttime : float ref = ref 0.
+
+
+let free_phy (_timestep, ball_shape, ball_body, ground, space) =
+  Ck.cpShapeFree ball_shape;
+  print_endline "cpShapeFree success";
+  Ck.cpBodyFree ball_body;
+  print_endline "cpBodyFree success";
+  Ck.cpShapeFree ground;
+  print_endline "cpShapeFree success";
+  Ck.cpSpaceFree space;
+  print_endline "cpSpaceFree success"
+
+
+module PhysicsSystem = struct
+
+  let rec update ms phy = function
+    | ({ physics_cmp = Some (orig_x, orig_y)
+       ; transform_cmp = Some trans
+       ; _} : Entity.t) :: tail ->
+      if Float.(<=.) !ttime 2. then (
+        let (timestep,_,ball_body,_,space) = phy in
+        let pos = Ck.cpBodyGetPosition ball_body in
+        let vel = Ck.cpBodyGetVelocity ball_body in
+        Printf.printf "Time is %f. ball is at (%f %f) with velocity (%f %f)\n"
+        !ttime pos.x pos.y vel.x vel.y;
+        ttime := !ttime +. timestep;
+        Ck.cpSpaceStep space timestep;
+        trans.x <- orig_x + (Int.of_float (pos.y *. 15.));
+        trans.y <- orig_y + (Int.of_float (pos.x *. 15.));
+      );
+      update ms phy tail
+    | _ :: tail -> update ms phy tail
+    | [] -> ()
+
+end
+
 (*****************************************************************************
  **** GAME *******************************************************************
  *****************************************************************************)
@@ -364,7 +469,8 @@ module Game = struct
     quit := true
   | _ -> ()
 
-  let update ms entities =
+  let update ms entities phy =
+    PhysicsSystem.update ms phy entities;
     TransformSystem.update entities;
     MovementSystem.update ms entities;
     MouseInSystem.update ms entities;
@@ -378,63 +484,45 @@ module Game = struct
     SpriteSystem.render rdr entities;
     Sdl.render_present rdr
 
-  let rec loop entities rdr = function
+  let rec loop entities rdr phy = function
   | true -> print_endline "quit"
   | false ->
     Events.poll ();
     let ms = get_step () in
-    update ms entities;
+    update ms entities phy;
     render entities rdr;
-    loop entities rdr !quit
+    loop entities rdr phy !quit
 
   let main () =
     let scr_w = 1280
     and scr_h = 720 in
-    let w = 1280
-    and h = 720 in
+    let middle_w = 1280 / 2 in
     let (win, rdr) = Utils.Screen.init ~w:scr_w ~h:scr_h in
     (*Sdl.render_set_logical_size rdr ~width:w ~height:h;*)
     Sdl.show_cursor ~toggle:false;
 
+    let phydata = init_phy () in
     Events.add handle_event;
     Events.add MovementSystem.handle_event;
     Events.add MouseInSystem.handle_event;
 
-    (* vessel vivant *)
-    let cmp_sprite = Sprite.make ~imgname:"ship9_x2.png" rdr in
-    let cmp_trans = Transform.make ~scale:1. ~x:(w / 2) ~y:(h / 2) () in
-    let cmp_keyin = KeyIn.make () in
-
-    let vessel = Entity.create () in
-    Entity.add_sprite vessel cmp_sprite;
-    Entity.add_transform vessel cmp_trans;
-    Entity.add_keyin vessel cmp_keyin;
-
-    (* grab vivant *)
-    let cmp_spritex = Sprite.make ~imgname:"mine.png" rdr in
-    let cmp_transx = Transform.make ~scale:0.1 ~x:(w / 2) ~y:(h / 2) () in
-    let cmp_mouseinx = MouseIn.make () in
-
-    let grab = Entity.create () in
-    Entity.add_sprite grab cmp_spritex;
-    Entity.add_transform grab cmp_transx;
-    Entity.add_mousein grab cmp_mouseinx;
-
-    (* enemi 1 *)
+    let _mh = scr_h / 2 in
     let cmp_spritey = Sprite.make ~imgname:"ship2_x2.png" rdr in
-    let cmp_transy = Transform.make ~scale:1. ~x:120 ~y:120 () in
+    let cmp_transy = Transform.make ~scale:1. ~x:middle_w ~y:150 () in
+    let cmp_physic = Physics.make ~x:middle_w ~y:150 in
 
     let enemy1 = Entity.create () in
     Entity.add_sprite enemy1 cmp_spritey;
     Entity.add_transform enemy1 cmp_transy;
-
+    Entity.add_physics enemy1 cmp_physic;
 
     ticks_elapsed := Sdl.get_ticks ();
-    loop !Entity.data rdr !quit;
-    Sprite.destroy cmp_sprite;
-    Sprite.destroy cmp_spritex;
+    loop !Entity.data rdr phydata !quit;
+
+    free_phy phydata;
     Sprite.destroy cmp_spritey;
 
     Utils.Screen.destroy (win, rdr)
 
 end
+

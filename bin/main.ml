@@ -15,7 +15,7 @@ let () =
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
 
-  Pyramid.Game.main ();
+  HelloChipmunk.Game.main ();
 (*
   ColorWall.Game.main ();
   Shmup.Game.main ();
