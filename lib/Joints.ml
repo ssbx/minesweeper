@@ -347,52 +347,52 @@ end
 
 let init_phy ()  =
 
-  let space = cpSpaceNew () in
-  print_endline "cpSpaceNew success";
+  let space = Cp.spaceNew () in
+  print_endline "Cp.spaceNew success";
 
-  let gravity = CpVect.make ~x:0. ~y:(-100.) in
+  let gravity = Cp.Vect.make ~x:0. ~y:(-100.) in
 
-  cpSpaceSetGravity space gravity;
-  print_endline "cpSpaceSetGravity success";
+  Cp.spaceSetGravity space gravity;
+  print_endline "Cp.spaceSetGravity success";
 
-  let body = cpSpaceGetStaticBody space in
-  print_endline "cpSpaceGetStaticBody success";
+  let body = Cp.spaceGetStaticBody space in
+  print_endline "Cp.spaceGetStaticBody success";
 
-  let va = CpVect.make ~x:(-20.) ~y:(5.)
-  and vb = CpVect.make ~x:(20.) ~y:(-5.) in
-  let ground = cpSegmentShapeNew body va vb 0. in
-  print_endline "cpSegmentShapeNew success";
+  let va = Cp.Vect.make ~x:(-20.) ~y:(5.)
+  and vb = Cp.Vect.make ~x:(20.) ~y:(-5.) in
+  let ground = Cp.segmentShapeNew body va vb 0. in
+  print_endline "Cp.segmentShapeNew success";
 
-  cpShapeSetFriction ground 1.;
-  print_endline "cpShapeSetFriction success";
+  Cp.shapeSetFriction ground 1.;
+  print_endline "Cp.shapeSetFriction success";
 
-  cpSpaceAddShape space ground;
-  print_endline "cpSpaceAddShape success";
+  Cp.spaceAddShape space ground;
+  print_endline "Cp.spaceAddShape success";
 
   let radius = 5.
   and mass = 1. in
-  let moment = cpMomentForCircle mass 0. radius CpVect.zero in
-  print_endline "cpMomentForCircle success";
+  let moment = Cp.momentForCircle mass 0. radius Cp.Vect.zero in
+  print_endline "Cp.momentForCircle success";
   Printf.printf "moment is %f\n" moment;
 
-  let ball_body = cpBodyNew mass moment in
-  print_endline "cpBodyNew success";
+  let ball_body = Cp.bodyNew mass moment in
+  print_endline "Cp.bodyNew success";
 
-  cpSpaceAddBody space ball_body;
-  print_endline "cpSpaceAddBody success";
+  Cp.spaceAddBody space ball_body;
+  print_endline "Cp.spaceAddBody success";
 
-  let position = CpVect.make ~x:0. ~y:15. in
-  cpBodySetPosition ball_body position;
-  print_endline "cpBodySetPosition success";
+  let position = Cp.Vect.make ~x:0. ~y:15. in
+  Cp.bodySetPosition ball_body position;
+  print_endline "Cp.bodySetPosition success";
 
-  let ball_shape = cpCircleShapeNew ball_body radius CpVect.zero  in
-  print_endline "cpCircleShapeNew success";
+  let ball_shape = Cp.circleShapeNew ball_body radius Cp.Vect.zero  in
+  print_endline "Cp.circleShapeNew success";
 
-  cpSpaceAddShape space ball_shape;
-  print_endline "cpSpaceAddShape success";
+  Cp.spaceAddShape space ball_shape;
+  print_endline "Cp.spaceAddShape success";
 
-  cpShapeSetFriction ball_shape 0.7;
-  print_endline "cpShapeSetFriction success";
+  Cp.shapeSetFriction ball_shape 0.7;
+  print_endline "Cp.shapeSetFriction success";
 
   let timestep = 1. /. 144. in
   (timestep, ball_shape, ball_body, ground, space)
@@ -401,14 +401,14 @@ let ttime : float ref = ref 0.
 
 
 let free_phy (_timestep, ball_shape, ball_body, ground, space) =
-  cpShapeFree ball_shape;
-  print_endline "cpShapeFree success";
-  cpBodyFree ball_body;
-  print_endline "cpBodyFree success";
-  cpShapeFree ground;
-  print_endline "cpShapeFree success";
-  cpSpaceFree space;
-  print_endline "cpSpaceFree success"
+  Cp.shapeFree ball_shape;
+  print_endline "Cp.shapeFree success";
+  Cp.bodyFree ball_body;
+  print_endline "Cp.bodyFree success";
+  Cp.shapeFree ground;
+  print_endline "Cp.shapeFree success";
+  Cp.spaceFree space;
+  print_endline "Cp.spaceFree success"
 
 
 module PhysicsSystem = struct
@@ -419,12 +419,12 @@ module PhysicsSystem = struct
        ; _} : Entity.t) :: tail ->
       if Float.(<=.) !ttime 2. then (
         let (timestep,_,ball_body,_,space) = phy in
-        let pos = cpBodyGetPosition ball_body in
-        let vel = cpBodyGetVelocity ball_body in
+        let pos = Cp.bodyGetPosition ball_body in
+        let vel = Cp.bodyGetVelocity ball_body in
         Printf.printf "Time is %f. ball is at (%f %f) with velocity (%f %f)\n"
         !ttime pos.x pos.y vel.x vel.y;
         ttime := !ttime +. timestep;
-        cpSpaceStep space timestep;
+        Cp.spaceStep space timestep;
         trans.x <- orig_x + (Int.of_float (pos.y *. 15.));
         trans.y <- orig_y + (Int.of_float (pos.x *. 15.));
       );
