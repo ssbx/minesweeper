@@ -1,6 +1,11 @@
 open CamlSDL2
 open Core
+open Gamekit
 open Chipmunk
+
+
+let imgdir = Option.value_exn (List.nth AssetFiles.Sites.images 0)
+let imgpath name = Filename.concat imgdir name
 
 let init_phy ()  =
 
@@ -121,7 +126,8 @@ module Game = struct
     Events.add MouseInSystem.handle_event;
 
     let _mh = scr_h / 2 in
-    let cmp_spritey = Sprite.make ~imgname:"circle.png" rdr in
+    let spritey_path = imgpath "circle.png" in
+    let cmp_spritey = Sprite.make ~filename:spritey_path rdr in
     let cmp_transy = Transform.make ~scale:1. ~x:middle_w ~y:150 () in
     let cmp_physic = Physics.make ~x:middle_w ~y:150 in
 
@@ -139,5 +145,6 @@ module Game = struct
     Utils.Screen.destroy (win, rdr)
 
 end
+
 
 

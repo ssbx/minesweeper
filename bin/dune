@@ -1,5 +1,8 @@
 (executable
  (public_name minesweeper)
  (name main)
- (libraries caml-sdl2 caml-sdl2-image dune-site minesweeper core))
+ (libraries gamekit dune-site unix))
 
+(generate_sites_module
+ (module AssetFiles)
+ (sites minesweeper))

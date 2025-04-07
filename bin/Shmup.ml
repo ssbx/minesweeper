@@ -1,5 +1,10 @@
 open CamlSDL2
+open Gamekit
 open Core
+
+let imgdir = Option.value_exn (List.nth AssetFiles.Sites.images 0)
+let imgpath name = Filename.concat imgdir name
+
 
 module Game = struct
 
@@ -55,7 +60,8 @@ module Game = struct
     Events.add MouseInSystem.handle_event;
 
     (* vessel vivant *)
-    let cmp_sprite = Sprite.make ~imgname:"ship9_x2.png" rdr in
+    let sprite_path = imgpath "ship9_x2.png" in
+    let cmp_sprite = Sprite.make ~filename:sprite_path rdr in
     let cmp_trans = Transform.make ~scale:1. ~x:(w / 2) ~y:(h / 2) () in
     let cmp_keyin = KeyIn.make () in
 
@@ -65,7 +71,8 @@ module Game = struct
     Entity.add_keyin vessel cmp_keyin;
 
     (* grab vivant *)
-    let cmp_spritex = Sprite.make ~imgname:"mine.png" rdr in
+    let spritex_path = imgpath "mine.png" in
+    let cmp_spritex = Sprite.make ~filename:spritex_path rdr in
     let cmp_transx = Transform.make ~scale:0.1 ~x:(w / 2) ~y:(h / 2) () in
     let cmp_mouseinx = MouseIn.make () in
 
@@ -75,13 +82,13 @@ module Game = struct
     Entity.add_mousein grab cmp_mouseinx;
 
     (* enemi 1 *)
-    let cmp_spritey = Sprite.make ~imgname:"ship2_x2.png" rdr in
+    let spritey_path = imgpath "ship2_x2.png" in
+    let cmp_spritey = Sprite.make ~filename:spritey_path rdr in
     let cmp_transy = Transform.make ~scale:1. ~x:120 ~y:120 () in
 
     let enemy1 = Entity.create () in
     Entity.add_sprite enemy1 cmp_spritey;
     Entity.add_transform enemy1 cmp_transy;
-
 
     ticks_elapsed := Sdl.get_ticks ();
     loop !Entity.data rdr !quit;
@@ -92,3 +99,4 @@ module Game = struct
     Utils.Screen.destroy (win, rdr)
 
 end
+

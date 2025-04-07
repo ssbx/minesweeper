@@ -1,5 +1,9 @@
 open CamlSDL2
+open Gamekit
 open Core
+
+let imgdir = Option.value_exn (List.nth AssetFiles.Sites.images 0)
+let imgpath name = Filename.concat imgdir name
 
 module Board = struct
 
@@ -125,7 +129,8 @@ module Game = struct
 
 
     (* grab vivant *)
-    let cmp_spritex = Sprite.make ~imgname:"mine.png" rdr in
+    let spritex = imgpath "mine.png" in
+    let cmp_spritex = Sprite.make ~filename:spritex rdr in
     let cmp_transx = Transform.make ~scale:0.1 ~x:(w / 2) ~y:(h / 2) () in
     let cmp_mouseinx = MouseIn.make () in
 
@@ -140,3 +145,5 @@ module Game = struct
     Utils.Screen.destroy (win, rdr)
 
 end
+
+

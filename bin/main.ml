@@ -1,4 +1,3 @@
-open Minesweeper
 open Core
 
 (* XXX: voir ~/src/box2d/build/bin/testbed,
@@ -15,10 +14,10 @@ let () =
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
 
-  ColorWall.Game.main ();
+  HelloChipmunk.Game.main ();
 (*
   Shmup.Game.main ();
-  HelloChipmunk.Game.main ();
+  ColorWall.Game.main ();
 *)
 
 (*

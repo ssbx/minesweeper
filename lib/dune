@@ -1,9 +1,6 @@
 (include_subdirs qualified)
 
 (library
- (name minesweeper)
- (libraries caml-sdl2 caml-sdl2-image dune-site unix core chipmunk))
+ (name gamekit)
+ (libraries caml-sdl2 caml-sdl2-image unix core chipmunk))
 
-(generate_sites_module
- (module AssetFiles)
- (sites minesweeper))
