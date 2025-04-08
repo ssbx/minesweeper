@@ -13,10 +13,10 @@ let () =
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
 
-  HelloChipmunk.Game.main ();
-(*
-  Shmup.Game.main ();
   ColorWall.Game.main ();
+(*
+  HelloChipmunk.Game.main ();
+  Shmup.Game.main ();
 *)
 
 (*

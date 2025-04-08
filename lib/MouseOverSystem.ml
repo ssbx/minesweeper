@@ -27,10 +27,7 @@ let rand_cols i r g b =
   | _ -> failwith "nononon"
 
 
-let rec update ms = function
-| ({ transform_cmp = Some t
-   ; mousein_cmp = None
-   ; color_rect = Some r; _} : Entity.t) :: tail ->
+let apply (t:Transform.t) (r:ColorRect.t) =
   let dist_x = Int.to_float (!MouseInSystem.pos_x - t.x |> abs)
   and dist_y = Int.to_float (!MouseInSystem.pos_y - t.y |> abs) in
   let dist_f = sqrt (dist_x *. dist_x +. dist_y *. dist_y) in
@@ -42,8 +39,16 @@ let rec update ms = function
     r.g <- g';
     r.b <- b';
     r.a <- 255
-  );
-  update ms tail
-| _ :: tail -> update ms tail
+  )
+
+let rec update ms = function
 | [] -> ()
+| ({ transform_cmp  = Some trans
+   ; mousein_cmp    = None
+   ; color_rect     = Some colr
+   ; _} : Entity.t) :: tail ->
+    apply trans colr;
+    update ms tail
+| _ :: tail -> 
+    update ms tail
 

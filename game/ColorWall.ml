@@ -133,7 +133,6 @@ module Game = struct
     let cmp_spritex = Sprite.make ~filename:spritex rdr in
     let cmp_transx = Transform.make ~scale:0.1 ~x:(w / 2) ~y:(h / 2) () in
     let cmp_mouseinx = MouseIn.make () in
-
     let grab = Entity.create () in
     Entity.add_sprite grab cmp_spritex;
     Entity.add_transform grab cmp_transx;
