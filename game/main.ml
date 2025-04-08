@@ -1,4 +1,3 @@
-open Core
 
 (* XXX: voir ~/src/box2d/build/bin/testbed,
   joints->cantilever et joints->chain *)
