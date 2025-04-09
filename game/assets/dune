@@ -28,7 +28,4 @@
  (section
   (site
    (minesweeper grids)))
- (files
-  "grid.txt"))
-
-
+ (files "grid.txt"))

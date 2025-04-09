@@ -34,13 +34,13 @@ let anims_waiting : bool ref = ref false
 let length () = List.length !anims_queue + List.length !anims_wait_queue
 
 let create
-  ~pt_start
-  ~pt_end
-  ~span
-  ~at_update
-  ?(at_end = fun () -> ())
-  ?(at_start = fun () -> ())
-  curve
+      ~pt_start
+      ~pt_end
+      ~span
+      ~at_update
+      ?(at_end = fun () -> ())
+      ?(at_start = fun () -> ())
+      curve
   =
   [ { easing = Easing.get_anim curve
     ; pt_start
@@ -56,16 +56,16 @@ let create
 ;;
 
 let create_v2
-  ~pt1_start
-  ~pt1_end
-  ~at1_update
-  ~pt2_start
-  ~pt2_end
-  ~at2_update
-  ~span
-  ?(at_start = fun () -> ())
-  ?(at_end = fun () -> ())
-  curve
+      ~pt1_start
+      ~pt1_end
+      ~at1_update
+      ~pt2_start
+      ~pt2_end
+      ~at2_update
+      ~span
+      ?(at_start = fun () -> ())
+      ?(at_end = fun () -> ())
+      curve
   =
   [ { easing = Easing.get_anim curve
     ; pt_start = pt1_start
@@ -93,26 +93,26 @@ let create_v2
 let start anim_handle =
   List.iter
     (fun anim ->
-      anim.ticks_start <- Float.of_int (Sdl.get_ticks ());
-      anim.at_start ();
-      anim.at_update anim.pt_start)
+       anim.ticks_start <- Float.of_int (Sdl.get_ticks ());
+       anim.at_start ();
+       anim.at_update anim.pt_start)
     anim_handle;
   anims_wait_queue := anim_handle @ !anims_wait_queue;
   anims_waiting := true
 ;;
 
 let create_start
-  ~pt_start
-  ~pt_end
-  ~span
-  ~at_update
-  ?(at_end = fun () -> ())
-  ?(at_start = fun () -> ())
-  curve
+      ~pt_start
+      ~pt_end
+      ~span
+      ~at_update
+      ?(at_end = fun () -> ())
+      ?(at_start = fun () -> ())
+      curve
   =
-    let a = create ~pt_start ~pt_end ~span ~at_update ~at_end ~at_start curve in
-    start a
-
+  let a = create ~pt_start ~pt_end ~span ~at_update ~at_end ~at_start curve in
+  start a
+;;
 
 (*let animate anim int_ticks =*)
 let rec update_all ticks del = function

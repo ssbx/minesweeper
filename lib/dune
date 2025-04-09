@@ -3,4 +3,3 @@
 (library
  (name gamekit)
  (libraries caml-sdl2 caml-sdl2-image unix core chipmunk))
-
