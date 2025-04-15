@@ -8,6 +8,5 @@ let rec poll () =
   match Sdl.poll_event () with
   | None -> ()
   | Some evt ->
-    List.iter ~f:(fun cb -> cb evt) !callbacks;
-    poll ()
-;;
+      List.iter ~f:(fun cb -> cb evt) !callbacks;
+      poll ()

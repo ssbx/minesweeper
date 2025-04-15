@@ -12,6 +12,7 @@ let () =
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
   ColorWall.Game.main ();
+
   (*
      HelloChipmunk.Game.main ();
   Shmup.Game.main ();
@@ -30,4 +31,3 @@ let () =
   Printf.printf "x is %i\n" !x;
   *)
   exit 0
-;;

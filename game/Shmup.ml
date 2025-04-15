@@ -14,13 +14,11 @@ module Game = struct
     let step = ticks_current - !ticks_elapsed in
     ticks_elapsed := ticks_current;
     step
-  ;;
 
   let handle_event = function
     | Sdl.Event.SDL_QUIT _ -> quit := true
     | Sdl.Event.SDL_KEYDOWN { scancode = ESCAPE; _ } -> quit := true
     | _ -> ()
-  ;;
 
   let update ms entities =
     TransformSystem.update entities;
@@ -28,7 +26,6 @@ module Game = struct
     MouseInSystem.update ms entities;
     ColorRectSystem.update entities;
     SpriteSystem.update entities
-  ;;
 
   let render entities rdr =
     Sdl.set_render_draw_color rdr ~r:0 ~g:100 ~b:150 ~a:255;
@@ -36,23 +33,19 @@ module Game = struct
     ColorRectSystem.render rdr entities;
     SpriteSystem.render rdr entities;
     Sdl.render_present rdr
-  ;;
 
   let rec loop entities rdr = function
     | true -> print_endline "quit"
     | false ->
-      Events.poll ();
-      let ms = get_step () in
-      update ms entities;
-      render entities rdr;
-      loop entities rdr !quit
-  ;;
+        Events.poll ();
+        let ms = get_step () in
+        update ms entities;
+        render entities rdr;
+        loop entities rdr !quit
 
   let main () =
-    let scr_w = 1280
-    and scr_h = 720 in
-    let w = 1280
-    and h = 720 in
+    let scr_w = 1280 and scr_h = 720 in
+    let w = 1280 and h = 720 in
     let win, rdr = Utils.Screen.init ~w:scr_w ~h:scr_h in
     (*Sdl.render_set_logical_size rdr ~width:w ~height:h;*)
     Sdl.show_cursor ~toggle:false;
@@ -90,5 +83,4 @@ module Game = struct
     Sprite.destroy cmp_spritex;
     Sprite.destroy cmp_spritey;
     Utils.Screen.destroy (win, rdr)
-  ;;
 end
