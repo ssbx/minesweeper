@@ -11,9 +11,9 @@ let () =
 *)
 
   (*Sys.chdir (Filename.dirname Sys.executable_name);*)
-  ColorWall.Game.main ();
-
+  Smash.Game.main ();
   (*
+  ColorWall.Game.main ();
      HelloChipmunk.Game.main ();
   Shmup.Game.main ();
   *)
