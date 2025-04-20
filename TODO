@@ -67,10 +67,10 @@ silvergun), points pour améliration vaiseau entre niveaux
 (pas sur, mais trouver un truc pour créer des possibilité de combos qui
 plafonnent)
 -- 1 --
-Armes joueur pour système de combo, on peut utiser la jauge energie pour 
+Armes joueur pour système de combo, on peut utiser la jauge energie pour
 utiliser des armes spécifiques:
 - découverte auto sans explosion du niveau +:
-  - extracteur d'energie en promenant une sphère sur les cases 
+  - extracteur d'energie en promenant une sphère sur les cases
 -- 2 --
 vider le tableau de 3 des 4 couleurs puis déclancher la bombe
 
@@ -83,10 +83,10 @@ Pièges parfois, explosion inévitable (compteur) à un moment, suivi d'un
 vide, puis gros pacas de bombes qui met en difficulté (puisque compteur
 vide)
 
-Peut être boss déffilement du tableau dessous, besoin de récupérer de 
+Peut être boss déffilement du tableau dessous, besoin de récupérer de
 l'énergie en déminant pour ensuite lancer la bombe manuelle sur le boss
 
-Ecran d'accueil du jeux, un panorama de foret abimée par la guerre, et 
+Ecran d'accueil du jeux, un panorama de foret abimée par la guerre, et
 des explosions intermitantes. Il faut déminer cette planète.
 
 fin perdue, panorama de planète dévastée.
@@ -97,8 +97,47 @@ Amélioration vaisseau:
 - nombre de modules de déminage mobile
 - portée de la bombe
 - reserve d'energie pour bombe
-- reserve de points de vie du vaisseau mère 
+- reserve de points de vie du vaisseau mère
 
 Communication équipage lors de diverses situations, comme dans Radiant
 Silvergun des fenètres avec les personnages manga en visio.
+
+voir jeux
+=========
+- dongeon keeper/1997, bullfrog prod
+- pikmin/2001, nintendo
+- zoo keeper/2003, robot communications/success
+- lumines/2004, Q entertainment
+- meteos/2005, Q entertainment
+- eets/2006, klei entertainment
+- the innedible machine
+- Ant style: orbient/2006, skip ltd
+- intelligent Qube/97, sony
+- tower bloxx/2005, digital chocolate
+- space invaders extreme/2008, taito
+- Q bert/82, gottlieb
+- sokoban/82
+- archon/83, free fall associates
+- saolomon's key/86, tecmo
+- dungeon master/87, ftl games (avec histoire commune)
+- les incroyables machines du prof tim/92, dynamik
+- devil dice/98, shift
+- picros ds
+- bookworm/2003
+- flow/2006, that game company
+- unpay/2006, Q entertainment
+- slitherlink/2006, hudson soft
+- gritter crunch/2008, capybara games
+- galcon/2008, phil hassey
+- geometry wars: petro evol 2/2008, bizare créations
+- edge/edgy/2008, mobygame
+- drop7/2008, area/code
+- boom blox bash party/2009, ea
+- zen bound/2009, secret exit
+- lumines live/2006, Q entertainment
+- peggle/2007, popcap games
+- puzzle league/2007, Intelligent systems
+- puzzle quest/2007,, infinite interactive
+- begeweled twist/2008, popcap games
+- chimne/2010, zoé mode
 
