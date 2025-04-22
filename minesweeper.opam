@@ -16,6 +16,7 @@ depends: [
   "core"
   "caml-sdl2"
   "caml-sdl2-image"
+  "conf-glew"
   "odoc" {with-doc}
 ]
 build: [

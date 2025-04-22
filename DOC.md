@@ -150,3 +150,8 @@ voir jeux
 - devil dice/98, shift
 - picros ds
 
+ressources shaders
+==================
+
+[https://github.com/vanrez-nez/awesome-glsl?tab=readme-ov-file](https://github.com/vanrez-nez/awesome-glsl?tab=readme-ov-file)
+[https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/01-Tutorial1/](https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/01-Tutorial1/)

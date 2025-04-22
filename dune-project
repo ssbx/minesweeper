@@ -24,7 +24,8 @@
  (depends ocaml dune dune-site
           core
           caml-sdl2
-          caml-sdl2-image)
+          caml-sdl2-image
+          conf-glew)
  (tags
   (topics "to describe" your project)))
 
