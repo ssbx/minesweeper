@@ -7,9 +7,11 @@ let imgdir = Option.value_exn (List.nth AssetFiles.Sites.images 0)
 let imgpath name = Filename.concat imgdir name
 
 let make_ball ~x ~y =
+  let x = x +. 200. in
+  let y = y +. 500. in
   let body = Cp.body_new 1. Float.infinity in
   Cp.body_set_position body (Cp.Vect.make ~x ~y);
-  let shape = Cp.circle_shape_new body 0.95 Cp.Vect.zero in
+  let shape = Cp.circle_shape_new body 10. Cp.Vect.zero in
   Cp.shape_set_elasticity shape 0.;
   Cp.shape_set_friction shape 0.;
   shape
@@ -22,11 +24,13 @@ let init_phy_1 () =
 
 let init_phy_2 space =
   let body = Cp.body_new 1000000000. Float.infinity in
+  (*let body = Cp.body_new 10. Float.infinity in*)
+  (*let body = Cp.body_new 10. 0.2 in*)
   Cp.space_add_body space body;
-  Cp.body_set_position body (Cp.Vect.make ~x:(-1000.) ~y:(-10.));
-  Cp.body_set_velocity body (Cp.Vect.make ~x:(400.) ~y:(0.));
+  Cp.body_set_position body (Cp.Vect.make ~x:(0.) ~y:(400.));
+  Cp.body_set_velocity body (Cp.Vect.make ~x:(10000.) ~y:(0.));
 
-  let shape = Cp.circle_shape_new body 8. Cp.Vect.zero in
+  let shape = Cp.circle_shape_new body 20. Cp.Vect.zero in
   Cp.space_add_shape space shape;
   Cp.shape_set_elasticity shape 0.;
   Cp.shape_set_friction shape 0.;
@@ -64,6 +68,8 @@ module Game = struct
     Sdl.set_render_draw_color rdr ~r:100 ~g:100 ~b:100 ~a:255;
     Sdl.render_clear rdr;
     ColorRectSystem.render rdr entities;
+    (*Printf.printf "render\n";
+    Out_channel.flush stdout;*)
     SpriteSystem.render rdr entities;
     Sdl.render_present rdr
 
@@ -91,14 +97,13 @@ module Game = struct
     let width, height = 10, 10 in
     let width_f, height_f = (Int.to_float width), (Int.to_float height) in
     let spritey_path = imgpath "circle.png" in
-    let cmp_sprite = Sprite.make ~filename:spritey_path rdr in
 
     for x = 1 to width do
       for y = 1 to height do
         let x_jitter = 0.05 *. (Random.float 1.) in
         let y_jitter = 0.05 *. (Random.float 1.) in
-        let x_f = Int.to_float(x) in
-        let y_f = Int.to_float(y) in
+        let x_f = Int.to_float(x * 10) in
+        let y_f = Int.to_float(y * 10) in
         let shape = make_ball
             ~x:(2. *. (x_f -. width_f /. 2. +. x_jitter))
             ~y:(2. *. (height_f /. 2. -. y_f +. y_jitter)) in
@@ -109,13 +114,16 @@ module Game = struct
 
         let cmp_physics2 = body in
         let pos = Cp.body_get_position body in
-        let x2 = pos.x *. 15. in
-        let y2 = pos.y *. 15. in
+        let x2 = pos.x in
+        let y2 = pos.y in
         let cmp_trans = Transform.make 
           ~x:(Int.of_float x2)
-          ~y:(Int.of_float y2) () in
+          ~y:(Int.of_float y2) ~scale:0.1 () in
+
+        Printf.printf "body pos x:%f y:%f\n" x2 y2;
 
         let ent = Entity.create () in
+        let cmp_sprite = Sprite.make ~filename:spritey_path rdr in
         Entity.add_sprite ent cmp_sprite;
         Entity.add_physics2 ent cmp_physics2;
         Entity.add_transform ent cmp_trans
@@ -125,11 +133,14 @@ module Game = struct
     let projectile = init_phy_2 space in
     let ent = Entity.create () in
     let pos = Cp.body_get_position projectile in
-    let x2 = pos.x *. 15. in
-    let y2 = pos.y *. 15. in
+    let x2 = pos.x in
+    let y2 = pos.y in
+    Printf.printf "projectile x:%f y:%f\n" x2 y2;
+    Out_channel.flush stdout;
     let cmp_trans = Transform.make 
           ~x:(Int.of_float x2)
-          ~y:(Int.of_float y2) () in
+          ~y:(Int.of_float y2) ~scale:0.2 () in
+    let cmp_sprite = Sprite.make ~filename:spritey_path rdr in
     Entity.add_sprite ent cmp_sprite;
     Entity.add_physics2 ent projectile;
     Entity.add_transform ent cmp_trans;
