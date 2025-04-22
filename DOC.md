@@ -155,3 +155,10 @@ ressources shaders
 
 [https://github.com/vanrez-nez/awesome-glsl?tab=readme-ov-file](https://github.com/vanrez-nez/awesome-glsl?tab=readme-ov-file)
 [https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/01-Tutorial1/](https://sibras.github.io/OpenGL4-Tutorials/docs/Tutorials/01-Tutorial1/)
+
+perfs, TODO chipmunk/opengl
+===========================
+
+Lib haut niveau pour faire le max de trucs en C pour le rendering/iteration
+des systèmes.
+
